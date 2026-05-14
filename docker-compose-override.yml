@@ -2,3 +2,8 @@ services:
   global_mysql:
     ports:
       - "3306:3306"
+  
+  global_pma:
+    restart: unless-stopped
+  global_dockergui:
+    restart: unless-stopped
