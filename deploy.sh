@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#1. - 05jun2026
+#1.2 - 05jun2026
 set -e
 
 CONFIG=".env/deploy.json"
@@ -36,13 +36,13 @@ docker build \
 docker push "$username/$imagename:$version"
 docker push "$username/$imagename:latest"
 
-echo "================================================"
+echo "===================doSsh=$sshStartRun============================"
 
 if [ "$sshStartRun" = "true" ]; then
-    ssh "$sshUsername@$sshServer" <<EOF
-    set -e
-    cd "$sshPath"
-    $sshCommand
+ssh "$sshUsername@$sshServer" <<EOF
+set -e
+cd "$sshPath"
+$sshCommand
 EOF
 fi
 

@@ -5,5 +5,3 @@ services:
   
   global_pma:
     restart: unless-stopped
-  global_dockergui:
-    restart: unless-stopped
