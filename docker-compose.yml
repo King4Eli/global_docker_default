@@ -5,7 +5,7 @@ services:
     expose:
       - "3306"
     env_file:
-      - _env/${STAGE}/mysql.env
+      - .env/mysql.env
     #environment:
     #  TZ: America/New_York
     #command: --default-time-zone=America/New_York
@@ -21,22 +21,7 @@ services:
     expose:
       - "80"
     env_file:
-      - _env/${STAGE}/pma.env
-    networks:
-      - shared-global-network
-
-
-  global_dockergui:
-    image: portainer/portainer-ce:latest
-    container_name: global_dockergui
-    volumes:
-      -  /var/run/docker.sock:/var/run/docker.sock 
-      - ./global_dockergui_volume/data:/data 
-    expose:
-      - 9000
-      - 9443
-    ports:
-      - "9443:9443"
+      - .env/pma.env
     networks:
       - shared-global-network
 
@@ -60,7 +45,7 @@ services:
     command: server /data --console-address ":9001"
     restart: unless-stopped
     env_file:
-      - _env/${STAGE}/minio.env
+      - .env/minio.env
     volumes:
       - miniodata:/data
     networks:

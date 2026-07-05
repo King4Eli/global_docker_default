@@ -1,3 +1,2 @@
-/npm
-/_env/prod
 /global_dockergui_volume
+.env/
