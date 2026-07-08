@@ -1,7 +1,8 @@
+# docker compose -f docker-compose.yml up -d
 services:
-  globalapp_mysql:
+  global_mysql:
     image: mysql:8.0
-    container_name: globalapp_mysql
+    container_name: global_mysql
     expose:
       - "3306"
     env_file:
@@ -31,9 +32,9 @@ services:
     container_name: globalapp_nginxPM
     restart: unless-stopped
     ports:
-      - "180:80"
-      - "181:81"
-      - "1443:443"
+      - "80:80"
+      - "81:81"
+      - "443:443"
     volumes:
       - nginx_pm_data:/data
       - nginx_pm_letsencrypt:/etc/letsencrypt
