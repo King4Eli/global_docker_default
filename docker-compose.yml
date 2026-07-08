@@ -62,10 +62,13 @@ volumes:
     name: global_apps_mysql_data
   miniodata:
     external: true
+    name: global_apps_miniodata
   nginx_pm_data:
     external: true
+    name: global_apps_nginx_pm_data
   nginx_pm_letsencrypt:
     external: true
+    name: global_apps_nginx_pm_letsencrypt
 
 networks:
   shared-global-network:
