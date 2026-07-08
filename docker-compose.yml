@@ -1,4 +1,4 @@
-# docker compose -f docker-compose.yml up -d
+# docker compose -p -f docker-compose.yml up -d
 services:
   global_mysql:
     image: mysql:8.0
@@ -61,8 +61,11 @@ volumes:
     external: true
     name: global_apps_mysql_data
   miniodata:
+    external: true
   nginx_pm_data:
+    external: true
   nginx_pm_letsencrypt:
+    external: true
 
 networks:
   shared-global-network:
