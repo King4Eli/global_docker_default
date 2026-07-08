@@ -15,6 +15,20 @@ services:
     restart: unless-stopped
     networks:
       - shared-global-network
+  global_minio:
+    image: minio/minio
+    container_name: global_minio
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    env_file:
+      - .env/minio.env
+    volumes:
+      - miniodata:/data
+    networks:
+      - shared-global-network
+    expose:
+      - "9001"
+      - "9000"
 
   globalapp_pma:
     image: phpmyadmin/phpmyadmin
@@ -41,20 +55,6 @@ services:
     networks:
       - shared-global-network
 
-  globalapp_minio:
-    image: minio/minio
-    container_name: globalapp_minio
-    command: server /data --console-address ":9001"
-    restart: unless-stopped
-    env_file:
-      - .env/minio.env
-    volumes:
-      - miniodata:/data
-    networks:
-      - shared-global-network
-    expose:
-      - "9001"
-      - "9000"
 
 volumes:
   mysql_data :
