@@ -1,7 +1,7 @@
 services:
-  global_mysql:
+  globalapp_mysql:
     image: mysql:8.0
-    container_name: global_mysql
+    container_name: globalapp_mysql
     expose:
       - "3306"
     env_file:
@@ -15,33 +15,34 @@ services:
     networks:
       - shared-global-network
 
-  global_pma:
+  globalapp_pma:
     image: phpmyadmin/phpmyadmin
-    container_name: global_pma
+    container_name: globalapp_pma
     expose:
       - "80"
     env_file:
       - .env/pma.env
+    restart: unless-stopped
     networks:
       - shared-global-network
 
-  global_nginx_proxy:
+  globalapp_nginxPM:
     image: jc21/nginx-proxy-manager:latest
-    container_name: global_nginx_proxy
+    container_name: globalapp_nginxPM
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "81:81"
-      - "443:443"
+      - "180:80"
+      - "181:81"
+      - "1443:443"
     volumes:
       - nginx_pm_data:/data
       - nginx_pm_letsencrypt:/etc/letsencrypt
     networks:
       - shared-global-network
 
-  global_minio:
+  globalapp_minio:
     image: minio/minio
-    container_name: global_minio
+    container_name: globalapp_minio
     command: server /data --console-address ":9001"
     restart: unless-stopped
     env_file:

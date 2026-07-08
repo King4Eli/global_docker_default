@@ -27,6 +27,10 @@ while getopts "v:b:" opt; do
         *) exit 1 ;;
     esac
 done
+if [[ -z "$version" || -z "$buildFolder" ]]; then
+    echo "Usage: $0 -v <version> -b <buildFolder>"
+    exit 1
+fi
 
 docker build \
     -t "$username/$imagename:$version" \

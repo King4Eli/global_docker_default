@@ -1,7 +1,7 @@
 services:
-  global_mysql:
+  globalapp_mysql:
     ports:
-      - "3306:3306"
+      - "13306:3306"
   
-  global_pma:
+  globalapp_pma:
     restart: unless-stopped
