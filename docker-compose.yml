@@ -1,4 +1,5 @@
-# docker compose -p -f docker-compose.yml up -d
+# docker compose -f docker-compose.yml up -d
+name: global_apps
 services:
   global_mysql:
     image: mysql:8.0
