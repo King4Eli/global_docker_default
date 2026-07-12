@@ -1,64 +1,83 @@
-#!/usr/bin/env bash
-#1.2 - 05jun2026
-set -e
-
 CONFIG=".env/deploy.json"
-if [ ! -f "$CONFIG" ]; then
-    echo "$CONFIG not found."
-    exit 1
-fi
 
-version=""
-imagename=$(jq -r '.imagename' "$CONFIG")
-username=$(jq -r '.username' "$CONFIG")
-buildFolder=""
+imageName=""
+listImages=false
 
-sshStartRun=$(jq -r '.ssh.start' "$CONFIG")
-sshUsername=$(jq -r '.ssh.username' "$CONFIG")
-sshServer=$(jq -r '.ssh.server' "$CONFIG")
-sshPath=$(jq -r '.ssh.path' "$CONFIG")
-sshCommand=$(jq -r '.ssh.command' "$CONFIG")
-
-# Only allow overriding the version
-while getopts "v:b:" opt; do
-    case $opt in
-        v) version="$OPTARG" ;;
-        b) buildFolder="$OPTARG" ;;
-        *) exit 1 ;;
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -i)
+            imageName="$2"
+            shift 2
+            ;;
+        --list|-l)
+            listImages=true
+            shift
+            ;;
+        *)
+            echo "Usage: $0 [-l|--list] [-i <imageName>]"
+            exit 1
+            ;;
     esac
 done
-if [[ -z "$version" || -z "$buildFolder" ]]; then
-    echo "Usage: $0 -v <version> -b <buildFolder>"
+
+if $listImages; then
+    jq -r 'keys[]' "$CONFIG"
+    exit 0
+fi
+
+if [[ -z "$imageName" ]]; then
+    echo "Usage: $0 [-l|--list] [-i <imageName>]"
     exit 1
 fi
 
+# Verify the key exists
+if ! jq -e --arg img "$imageName" '.[$img]' "$CONFIG" >/dev/null; then
+    echo "Image '$imageName' not found in $CONFIG"
+    exit 1
+fi
+
+username=$(jq -r --arg img "$imageName" '.[$img].dockerrepo.username' "$CONFIG")
+version=$(jq -r --arg img "$imageName" '.[$img].dockerrepo.appversion' "$CONFIG")
+buildFolder=$(jq -r --arg img "$imageName" '.[$img].dockerrepo.buildfolder' "$CONFIG")
+
+sshStartRun=$(jq -r --arg img "$imageName" '.[$img].ssh.start' "$CONFIG")
+sshUsername=$(jq -r --arg img "$imageName" '.[$img].ssh.username' "$CONFIG")
+sshServer=$(jq -r --arg img "$imageName" '.[$img].ssh.server' "$CONFIG")
+sshPath=$(jq -r --arg img "$imageName" '.[$img].ssh.path' "$CONFIG")
+sshCommand=$(jq -r --arg img "$imageName" '.[$img].ssh.command' "$CONFIG")
+
 docker build \
-    -t "$username/$imagename:$version" \
-    -t "$username/$imagename:latest" \
+    -t "$username/$imageName:$version" \
+    -t "$username/$imageName:latest" \
     "$buildFolder"
 
-docker push "$username/$imagename:$version"
-docker push "$username/$imagename:latest"
+docker push "$username/$imageName:$version"
+docker push "$username/$imageName:latest"
 
-echo "===================doSsh=$sshStartRun============================"
 
 if [ "$sshStartRun" = "true" ]; then
-ssh "$sshUsername@$sshServer" <<EOF
+    echo ""
+    echo "=================ssh=================="
+    ssh "$sshUsername@$sshServer" <<EOF
 set -e
 cd "$sshPath"
 $sshCommand
 EOF
 fi
 
-#{
-#  "version": "1.0.1",
-#  "imagename": "",
-#  "username": "",
-#  "ssh": {
-#    "start": true,
-#    "username": "",
-#    "server": "",
-#    "path": "",
-#    "command": ""
-#  }
-#}
+# {
+#   "suyoapp_com_api": {
+#     "dockerrepo": {
+#       "username": "kingeli",
+#       "appversion": "1.0.0",
+#       "buildfolder": "./api_v1"
+#     },
+#     "ssh": {
+#       "start": true,
+#       "username": "suyoapp_com",
+#       "server": "84.13.15.61",
+#       "path": "$HOME/proj/suyoapp_com",
+#       "command": "docker compose -p suyoapp_com up -d --pull always suyoapp_com_webui"
+#     }
+#   },
+# }
