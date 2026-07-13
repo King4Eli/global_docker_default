@@ -1,3 +1,4 @@
+name: global_apps
 services:
   global_mysql:
     ports:

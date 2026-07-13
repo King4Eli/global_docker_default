@@ -1,0 +1,14 @@
+name: global_apps
+services:
+  global_redis:
+    image: redis:7-alpine
+    container_name: global_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - shared-global-network
+      
+networks:
+  shared-global-network:
+    external: true

@@ -1,7 +1,8 @@
+name: global_apps
 services:
-  portainer:
+  global_portainer:
     image: portainer/portainer-ce:latest
-    container_name: portainer
+    container_name: global_portainer
     restart: unless-stopped
     expose:
       - "8000"

@@ -3,6 +3,7 @@
 # Generated for compose flavor
 # https://setup.mailu.io/2024.06/setup/b1fc4271-f69a-4fec-81f2-0289a4cb94ca
 
+name: global_apps
 services:
 
   # External dependencies
